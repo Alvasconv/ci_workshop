@@ -4,7 +4,14 @@ Miembro 1: Funcionalidad Base y Costos
 - Requisito 1: Selección de Membresía
 - Requisito 3: Cálculo de Costo Base y Total
 - Requisito 7: Validación de Disponibilidad
+
+Miembro 2: Características Adicionales y Descuentos
+- Requisito 2: Características Adicionales
+- Requisito 4: Descuentos por Grupo
+- Requisito: Descuentos por Oferta Especial
 """
+
+from discounts import MembershipCalculator
 
 # Define available membership plans with their base costs
 MEMBERSHIP_PLANS = {
@@ -27,10 +34,10 @@ MEMBERSHIP_PLANS = {
 
 # Define available additional features
 ADDITIONAL_FEATURES = {
-    "personal_training": {"name": "Personal Training Sessions", "cost": 50.00},
-    "group_classes": {"name": "Group Classes", "cost": 20.00},
-    "nutrition_coaching": {"name": "Nutrition Coaching", "cost": 30.00},
-    "locker_room": {"name": "Premium Locker Room", "cost": 15.00}
+    "personal_training": {"name": "Personal Training Sessions", "cost": 50.00, "is_premium": False},
+    "group_classes": {"name": "Group Classes", "cost": 20.00, "is_premium": False},
+    "nutrition_coaching": {"name": "Nutrition Coaching", "cost": 30.00, "is_premium": False},
+    "locker_room": {"name": "Premium Locker Room", "cost": 15.00, "is_premium": True}
 }
 
 
@@ -134,19 +141,24 @@ def calculate_additional_features_cost(feature_keys):
     return total_cost, []
 
 
-def calculate_total_membership_cost(plan_key, feature_keys=None):
+def calculate_total_membership_cost(plan_key, feature_keys=None, num_people=1):
     """
-    Requirement 3: Sum base membership cost and additional features cost to get total.
+    Requirement 3 & 4: Sum base membership cost and additional features cost to get total.
+    Apply 10% discount if 2 or more people sign up.
     
     Args:
         plan_key (str): The key of the selected membership plan
         feature_keys (list): List of additional feature keys (default: empty list)
+        num_people (int): Number of people signing up (default: 1)
     
     Returns:
         tuple: (total_cost: float, details: dict) or (-1, error_dict) if invalid
     """
     if feature_keys is None:
         feature_keys = []
+    
+    if num_people < 1:
+        return -1, {"error": "Number of people must be at least 1"}
     
     # Validate membership plan
     if not validate_membership_availability(plan_key):
@@ -161,15 +173,24 @@ def calculate_total_membership_cost(plan_key, feature_keys=None):
     if features_cost == -1:
         return -1, {"error": f"Invalid features: {invalid_features}"}
     
-    # Sum costs
-    total_cost = base_cost + features_cost
+    # Prepare features for MembershipCalculator
+    selected_features = select_additional_features(feature_keys)
+
+    # Use MembershipCalculator for total calculation
+    try:
+        total_cost = MembershipCalculator.calculate_total(base_cost, selected_features, num_people)
+    except ValueError as e:
+        return -1, {"error": str(e)}
     
     details = {
         "membership_plan": MEMBERSHIP_PLANS[plan_key.lower()]["name"],
         "base_cost": base_cost,
         "features_cost": features_cost,
         "total_cost": total_cost,
-        "features_selected": feature_keys
+        "features_selected": feature_keys,
+        "num_people": num_people,
+        "surcharge": 0.0, # Surcharge details are handled internally
+        "discount": 0.0   # Discount details are handled internally
     }
     
     return total_cost, details
@@ -207,15 +228,32 @@ def get_feature_details(feature_key):
     return ADDITIONAL_FEATURES[feature_key.lower()]
 
 
-def list_available_features():
+def display_additional_features():
     """
-    List all available additional features.
+    Requirement 2: Display available additional features with their costs.
     
     Returns:
-        dict: Dictionary of available features
+        dict: A dictionary of available additional features
     """
     print("\n=== Available Additional Features ===")
     for key, feature in ADDITIONAL_FEATURES.items():
         print(f"{key.upper()}: ${feature['cost']:.2f}")
         print(f"  Description: {feature['name']}\n")
     return ADDITIONAL_FEATURES
+
+
+def select_additional_features(feature_keys):
+    """
+    Requirement 2: Allow user to select additional features.
+    
+    Args:
+        feature_keys (list): List of feature keys to select
+    
+    Returns:
+        list: List of selected feature dictionaries
+    """
+    selected_features = []
+    for key in feature_keys:
+        if key.lower() in ADDITIONAL_FEATURES:
+            selected_features.append(ADDITIONAL_FEATURES[key.lower()])
+    return selected_features

@@ -173,7 +173,19 @@ class TestCostCalculation:
         total, details = calculate_total_membership_cost("family", all_features)
         expected_features_cost = sum(f["cost"] for f in ADDITIONAL_FEATURES.values())
         expected_total = 99.99 + expected_features_cost
-        assert total == expected_total
+        
+        # Apply premium surcharge if applicable
+        has_premium = any(f.get("is_premium", False) for f in ADDITIONAL_FEATURES.values())
+        if has_premium:
+            expected_total += expected_total * 0.15
+
+        # Apply special offer discount if applicable
+        if expected_total > 400:
+            expected_total -= 50.00
+        elif expected_total > 200:
+            expected_total -= 20.00
+            
+        assert total == pytest.approx(expected_total, 0.01)
 
 
 class TestEdgeCases:
