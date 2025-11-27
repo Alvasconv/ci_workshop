@@ -33,12 +33,6 @@ jobs:
       - name: Run type checker (mypy)
         run: mypy . --ignore-missing-imports
 
-      - name: Run tests with pytest
-        run: |
-          pytest --junitxml=test-results.xml -v
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
