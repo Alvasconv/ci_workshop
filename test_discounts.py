@@ -4,6 +4,7 @@ Covers Requirements 2, 4, 5, and 6.
 """
 
 import pytest
+
 from discounts import MembershipCalculator
 
 

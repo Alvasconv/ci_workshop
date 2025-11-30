@@ -7,19 +7,15 @@ Tests for Miembro 1 functionality:
 """
 
 import pytest
-from gym_membership import (
-    display_membership_plans,
-    select_membership,
-    validate_membership_availability,
-    validate_features_availability,
-    calculate_base_membership_cost,
-    calculate_additional_features_cost,
-    calculate_total_membership_cost,
-    get_membership_details,
-    get_feature_details,
-    MEMBERSHIP_PLANS,
-    ADDITIONAL_FEATURES,
-)
+
+from gym_membership import (ADDITIONAL_FEATURES, MEMBERSHIP_PLANS,
+                            calculate_additional_features_cost,
+                            calculate_base_membership_cost,
+                            calculate_total_membership_cost,
+                            display_membership_plans, get_feature_details,
+                            get_membership_details, select_membership,
+                            validate_features_availability,
+                            validate_membership_availability)
 
 
 class TestMembershipSelection:

@@ -7,7 +7,7 @@ This module contains the business logic for:
 - Requirement 5: Special Offer Discounts
 """
 
-from typing import List, Dict, Any, Union
+from typing import Any, Dict, List, Union
 
 
 class MembershipCalculator:
