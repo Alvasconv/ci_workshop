@@ -9,13 +9,16 @@ This module contains the business logic for:
 
 from typing import List, Dict, Any, Union
 
+
 class MembershipCalculator:
     """
     Calculator for gym membership costs including features, surcharges, and discounts.
     """
 
     @staticmethod
-    def calculate_total(base_cost: float, features: List[Dict[str, Any]], num_people: int = 1) -> float:
+    def calculate_total(
+        base_cost: float, features: List[Dict[str, Any]], num_people: int = 1
+    ) -> float:
         """
         Calculate the final total cost applying all business rules.
 
@@ -27,7 +30,7 @@ class MembershipCalculator:
 
         Returns:
             float: The final calculated cost.
-            
+
         Raises:
             ValueError: If inputs are invalid (negative costs, less than 1 person).
         """
@@ -36,7 +39,7 @@ class MembershipCalculator:
             raise ValueError("Base cost cannot be negative.")
         if num_people < 1:
             raise ValueError("Number of people must be at least 1.")
-        
+
         features_cost = 0.0
         has_premium = False
 
@@ -45,7 +48,7 @@ class MembershipCalculator:
             if cost < 0:
                 raise ValueError("Feature cost cannot be negative.")
             features_cost += cost
-            
+
             if feature.get("is_premium", False):
                 has_premium = True
 

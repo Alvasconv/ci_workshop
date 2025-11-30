@@ -6,6 +6,7 @@ Covers Requirements 2, 4, 5, and 6.
 import pytest
 from discounts import MembershipCalculator
 
+
 class TestMembershipCalculator:
     """Test suite for MembershipCalculator class"""
 
@@ -20,7 +21,7 @@ class TestMembershipCalculator:
         # 100 base + 20 feature + 30 feature = 150
         features = [
             {"cost": 20.0, "is_premium": False},
-            {"cost": 30.0, "is_premium": False}
+            {"cost": 30.0, "is_premium": False},
         ]
         total = MembershipCalculator.calculate_total(100.0, features, 1)
         assert total == 150.0
@@ -66,7 +67,7 @@ class TestMembershipCalculator:
         # Group Total = 172.5 * 3 = 517.5
         # Group Discount 10% = 517.5 * 0.90 = 465.75
         # Special Offer (>400) = 465.75 - 50 = 415.75
-        
+
         features = [{"cost": 50.0, "is_premium": True}]
         total = MembershipCalculator.calculate_total(100.0, features, 3)
         assert total == 415.75
@@ -75,12 +76,13 @@ class TestMembershipCalculator:
         """Test error handling for invalid inputs"""
         with pytest.raises(ValueError):
             MembershipCalculator.calculate_total(-100.0, [], 1)
-        
+
         with pytest.raises(ValueError):
             MembershipCalculator.calculate_total(100.0, [], 0)
-            
+
         with pytest.raises(ValueError):
             MembershipCalculator.calculate_total(100.0, [{"cost": -10.0}], 1)
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
